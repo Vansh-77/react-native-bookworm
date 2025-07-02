@@ -8,9 +8,9 @@ const router = express.Router();
 router.post("/add", ProtectRoute, async (req, res) => {
 
     try {
-        const { title, desc, image } = req.body;
+        const { title, desc, image , rating } = req.body;
 
-        if (!title || !desc || !image) {
+        if (!title || !desc || !image){
             return res.status(400).json({ message: "Please fill all fields" });
         }
 
@@ -21,7 +21,8 @@ router.post("/add", ProtectRoute, async (req, res) => {
             user: req.user._id,
             title,
             desc,
-            image: imageUrl
+            image: imageUrl,
+            rating
         });
         await book.save();
         res.status(201).json({
@@ -39,9 +40,9 @@ router.post("/add", ProtectRoute, async (req, res) => {
 router.get("/", ProtectRoute, async (req, res) => {
 
     try {
-        const pages = req.query.pages || 1;
+        const page = req.query.page || 1;
         const limit = req.query.limit || 5;
-        const skip = (pages - 1) * limit;
+        const skip = (page - 1) * limit;
         const total = await Book.countDocuments();
         const totalPages = Math.ceil(total / limit);
         const books = await Book.find().sort({ createdAt: -1 }).skip(skip).limit(limit).populate("user", "username profileImage");
@@ -54,7 +55,7 @@ router.get("/", ProtectRoute, async (req, res) => {
         res.send({
             books,
             totalPages,
-            currentPage: pages,
+            currentPage: page,
             totalBooks: total,
         });
 
