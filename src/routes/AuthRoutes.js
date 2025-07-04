@@ -9,6 +9,14 @@ function generateToken(id) {
     return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "15d" })
 
 }
+function getRandomString(length = 10) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
 
 router.post("/register", async (req, res) => {
 
@@ -32,7 +40,7 @@ router.post("/register", async (req, res) => {
         if (existingEmail) {
             return res.status(400).json({ message: "Email already exists" });
         }
-        const profileImage =`https://api.dicebear.com/9.x/avataaars/svg?seed=${username}`;
+        const profileImage =`https://api.dicebear.com/9.x/adventurer/svg?seed=${getRandomString()}`;
 
         const user = new User({
             username,
